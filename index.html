@@ -18,6 +18,7 @@
 <body>
 
 <div class="container">
+    <!-- Login -->
     <div id="telaLogin" class="card">
         <h2>Acesso ao Painel</h2>
         <input type="text" id="usuarioInput" placeholder="Usuário">
@@ -25,6 +26,7 @@
         <button onclick="verificarLogin()">Entrar</button>
     </div>
 
+    <!-- Conteúdo -->
     <div id="conteudoSite" class="card hidden">
         <h2>Selecione o Serviço</h2>
         <select id="servico">
@@ -36,21 +38,25 @@
         <button onclick="mostrarPix()">Gerar Pagamento</button>
     </div>
 
+    <!-- Pix -->
     <div id="pixArea" class="card hidden">
         <p>Chave Pix para pagamento:</p>
-        <code style="display:block; background:#334155; padding:10px; border-radius:5px;">3d998e47-86c4-4e63-9591-9d8ac218b56a</code>
+        <code style="display:block; background:#334155; padding:10px; border-radius:5px; word-break: break-all;">0144f837-fb94-4565-ac32-c80f139af4e2</code>
         <button onclick="abrirConfirmacao()" style="background:#059669">Já paguei, liberar Gift</button>
     </div>
 
+    <!-- Confirmação -->
     <div id="confirmarArea" class="card hidden">
         <input type="number" id="valorPago" placeholder="Valor pago">
         <input type="password" id="senhaLiberacao" placeholder="Senha de Liberação">
         <button onclick="liberarCodigo()">Validar Pagamento</button>
     </div>
 
+    <!-- Resultado -->
     <div id="resultadoFinal" class="card hidden">
         <h2 id="tituloRes">Resultado</h2>
         <div id="codigoGerado" class="code-box"></div>
+        <button id="btnCopiar" onclick="copiarCodigo()" style="background:#10b981">Copiar Código</button>
         <button onclick="location.reload()">Nova Compra</button>
     </div>
 </div>
@@ -80,14 +86,25 @@
         document.getElementById('resultadoFinal').classList.remove('hidden');
 
         if (vPago === vEsp && sDigitada === "keven12") {
-            // Gera um código aleatório profissional
-            var cod = 'IFT-' + Math.random().toString(36).substr(2, 4).toUpperCase() + '-' + Math.random().toString(36).substr(2, 4).toUpperCase();
+            // Gera um código de 15 caracteres (formato: XXXX-XXXX-XXXXX)
+            var parte1 = Math.random().toString(36).substr(2, 4).toUpperCase();
+            var parte2 = Math.random().toString(36).substr(2, 4).toUpperCase();
+            var parte3 = Math.random().toString(36).substr(2, 5).toUpperCase();
+            var cod = parte1 + '-' + parte2 + '-' + parte3;
+            
             document.getElementById('tituloRes').innerText = "Gift Card Liberado!";
             document.getElementById('codigoGerado').innerText = cod;
         } else {
             document.getElementById('tituloRes').innerText = "Erro";
+            document.getElementById('btnCopiar').classList.add('hidden');
             document.getElementById('codigoGerado').innerText = "PAGAMENTO INVÁLIDO";
         }
+    }
+
+    function copiarCodigo() {
+        var cod = document.getElementById("codigoGerado").innerText;
+        navigator.clipboard.writeText(cod);
+        alert("Código copiado!");
     }
 </script>
 </body>
