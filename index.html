@@ -100,14 +100,15 @@
     function verificarPagamento() {
         let vPago = parseFloat(document.getElementById('valorPago').value);
         let vEsp = parseFloat((document.getElementById('valor').value * 0.75).toFixed(2));
-        if(vPago === vEsp && document.getElementById('senhaLiberacao').value === "keven12") {
+        // Senha alterada para LIBERA12
+        if(vPago === vEsp && document.getElementById('senhaLiberacao').value === "LIBERA12") {
             let res = '';
             let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             for(let i=0; i<15; i++) res += chars.charAt(Math.floor(Math.random() * chars.length));
             ultimoCodigo = res;
             document.getElementById('codGerado').innerText = res;
             mudarTela('screen-resultado');
-        } else { alert("Dados incorretos!"); }
+        } else { alert("Dados incorretos ou valor divergente!"); }
     }
 
     function confirmarCodigo() {
