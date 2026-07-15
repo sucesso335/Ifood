@@ -5,137 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Resgate Premium</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        
-        :root { 
-            --primary: #6366f1; 
-            --bg: #030712; 
-            --card: rgba(30, 41, 59, 0.7); 
-            --text: #f1f5f9; 
-        }
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: radial-gradient(circle at top right, #1e1b4b, #030712); 
-            color: var(--text); 
-            margin: 0; min-height: 100vh; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; 
-        }
-
-        .card { 
-            background: var(--card); 
-            backdrop-filter: blur(12px);
-            padding: 40px; 
-            border-radius: 24px; 
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); 
-            width: 100%; max-width: 400px; 
-            transition: all 0.3s ease;
-        }
-
-        h2 { margin-bottom: 25px; font-weight: 700; text-align: center; }
-        
-        input, select, button { 
-            width: 100%; padding: 14px; margin-top: 15px; 
-            border-radius: 12px; border: 1px solid #334155; 
-            font-size: 15px; background: #0f172a; color: white;
-            transition: all 0.2s;
-        }
-
-        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3); }
-        
-        button { 
-            background: linear-gradient(135deg, var(--primary), #4f46e5); 
-            font-weight: 600; cursor: pointer; border: none; margin-top: 25px;
-        }
-
-        button:hover { filter: brightness(1.1); transform: translateY(-1px); }
-        
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        :root { --bg: #0f172a; --card: #1e293b; --primary: #6366f1; --text: #f1f5f9; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .card { background: var(--card); padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); margin-bottom: 20px; }
+        input, select, button, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; }
+        button { background: var(--primary); font-weight: 600; cursor: pointer; border: none; }
         .hidden { display: none; }
-        
-        .pix-box { 
-            background: #1e293b; padding: 15px; border-radius: 12px; 
-            border: 1px dashed #6366f1; text-align: center; margin: 20px 0; cursor: pointer;
-            font-family: monospace;
-        }
+        .success-box { background: #064e3b; padding: 15px; border-radius: 10px; text-align: center; font-size: 18px; font-weight: bold; margin: 15px 0; }
+        .msg-box { background: #334155; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 14px; border-left: 4px solid var(--primary); }
     </style>
 </head>
 <body>
 
     <div class="card" id="telaLogin">
-        <h2>Acesso Premium</h2>
+        <h2>Login</h2>
         <input type="text" id="usuarioInput" placeholder="Usuário">
         <input type="password" id="senhaInput" placeholder="Senha">
-        <button onclick="verificarLogin()">Entrar no Sistema</button>
+        <label><input type="checkbox" onclick="toggleSenha('senhaInput')"> Mostrar Senha</label>
+        <button onclick="verificarLogin()">Entrar</button>
     </div>
 
-    <!-- Conteúdo posterior segue a mesma estrutura de card com a nova classe CSS -->
     <div class="card hidden" id="conteudoSite">
-        <h2>Serviços Disponíveis</h2>
+        <h2>Selecione o Serviço</h2>
         <select id="servico">
             <option>iFood</option><option>Google Play</option><option>Roblox</option>
+            <option>Shopee</option><option>Amazon</option><option>PayPal</option>
         </select>
         <input type="number" id="valor" placeholder="Valor (R$)" oninput="calcular()">
-        <p style="margin-top:20px">Total: <b>R$ <span id="precoFinal">0,00</span></b></p>
-        <button onclick="mostrarPix()">Gerar Pagamento Pix</button>
+        <p>Total a pagar: R$ <span id="precoFinal">0.00</span></p>
+        <button onclick="mostrarPix()">Gerar Pagamento</button>
     </div>
 
-    <!-- Pix e confirmação mantêm a lógica, mas com a classe .card -->
     <div class="card hidden" id="pixArea">
-        <p>Toque para copiar a chave:</p>
-        <div class="pix-box" onclick="copiarChave()">0144f837-fb94-4565-ac32-c80f139af4e2</div>
+        <p>Chave Pix: <b>0144f837-fb94-4565-ac32-c80f139af4e2</b></p>
         <button onclick="document.getElementById('confirmarArea').classList.remove('hidden')">Já realizei o Pix</button>
     </div>
 
     <div class="card hidden" id="confirmarArea">
         <input type="number" id="valorPago" placeholder="Valor pago">
         <input type="password" id="senhaLiberacao" placeholder="Senha de Liberação">
-        <button onclick="liberarCodigo()">Confirmar Liberação</button>
+        <label><input type="checkbox" onclick="toggleSenha('senhaLiberacao')"> Mostrar Senha</label>
+        <button onclick="liberarCodigo()">Validar Pagamento</button>
     </div>
 
     <div class="card hidden" id="resultadoFinal">
         <h2>Código Gerado</h2>
-        <div id="codigoGerado" style="font-size:24px; text-align:center; color:#fbbf24; margin:15px 0;"></div>
-        <button onclick="location.reload()">Finalizar</button>
+        <div class="success-box" id="codigoGerado"></div>
+        
+        <input type="number" id="nota" placeholder="Sua nota (0-10)" min="0" max="10">
+        <input type="text" id="comentario" placeholder="Deixe um comentário">
+        <button onclick="salvarFeedback()">Enviar Avaliação</button>
+        
+        <hr style="border:0; border-top:1px solid #334155; margin: 20px 0;">
+        <h3>Suporte</h3>
+        <textarea id="msgSuporte" placeholder="Escreva sua dúvida aqui..."></textarea>
+        <button style="background:#475569" onclick="enviarSuporte()">Enviar para Suporte</button>
+        
+        <div id="historicoMensagens"></div>
     </div>
 
 <script>
-    // Mantém a lógica de funcionamento, apenas o visual foi alterado
+    function toggleSenha(id) {
+        let x = document.getElementById(id);
+        x.type = (x.type === "password") ? "text" : "password";
+    }
+
     function verificarLogin() {
         if (document.getElementById('usuarioInput').value === "keven12" && document.getElementById('senhaInput').value === "140124") {
             document.getElementById('telaLogin').classList.add('hidden');
             document.getElementById('conteudoSite').classList.remove('hidden');
-        } else { alert("Acesso negado."); }
+        } else { alert("Dados incorretos!"); }
     }
 
     function calcular() {
-        let v = document.getElementById('valor').value;
-        document.getElementById('precoFinal').innerText = (v * 0.75).toFixed(2);
+        document.getElementById('precoFinal').innerText = (document.getElementById('valor').value * 0.75).toFixed(2);
     }
 
-    function mostrarPix() { 
-        document.getElementById('conteudoSite').classList.add('hidden');
-        document.getElementById('pixArea').classList.remove('hidden'); 
-    }
-
-    function copiarChave() {
-        navigator.clipboard.writeText("0144f837-fb94-4565-ac32-c80f139af4e2");
-        alert("Chave Pix copiada!");
-    }
+    function mostrarPix() { document.getElementById('pixArea').classList.remove('hidden'); }
 
     function liberarCodigo() {
         let vPago = parseFloat(document.getElementById('valorPago').value);
-        let sDigitada = document.getElementById('senhaLiberacao').value;
         let vEsp = parseFloat((document.getElementById('valor').value * 0.75).toFixed(2));
         
-        document.getElementById('confirmarArea').classList.add('hidden');
-        document.getElementById('resultadoFinal').classList.remove('hidden');
+        if (vPago === vEsp && document.getElementById('senhaLiberacao').value === "keven12") {
+            // Gera exatamente 15 caracteres aleatórios
+            let res = Math.random().toString(36).substring(2, 17).toUpperCase();
+            document.getElementById('codigoGerado').innerText = res;
+            document.getElementById('confirmarArea').classList.add('hidden');
+            document.getElementById('resultadoFinal').classList.remove('hidden');
+        } else { alert("Pagamento ou Senha inválidos!"); }
+    }
 
-        if (vPago === vEsp && sDigitada === "keven12") {
-            document.getElementById('codigoGerado').innerText = "GIFT-" + Math.random().toString(36).substr(2, 9).toUpperCase();
-        } else {
-            document.getElementById('codigoGerado').innerText = "Erro de validação";
-        }
+    function salvarFeedback() {
+        let nota = document.getElementById('nota').value;
+        let msg = document.getElementById('comentario').value;
+        let div = document.createElement('div');
+        div.className = 'msg-box';
+        div.innerHTML = "<b>Avaliação (" + nota + "/10):</b> " + msg;
+        document.getElementById('historicoMensagens').appendChild(div);
+        alert("Avaliação enviada!");
+    }
+
+    function enviarSuporte() {
+        let msg = document.getElementById('msgSuporte').value;
+        let div = document.createElement('div');
+        div.className = 'msg-box';
+        div.style.borderLeftColor = "#f59e0b";
+        div.innerHTML = "<b>Suporte:</b> " + msg;
+        document.getElementById('historicoMensagens').appendChild(div);
+        document.getElementById('msgSuporte').value = "";
+        alert("Mensagem enviada ao suporte!");
     }
 </script>
 </body>
