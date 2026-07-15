@@ -3,65 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Premium</title>
+    <title>Painel de Acesso</title>
     <style>
-        * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #f1f5f9; display: flex; justify-content: center; padding: 20px; margin: 0; min-height: 100vh; }
-        .card { background: #1e293b; padding: 25px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 10px 15px rgba(0,0,0,0.3); }
-        input, select, button, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; display: block; }
-        button { background: #6366f1; font-weight: bold; cursor: pointer; border: none; }
+        /* Reset para evitar problemas de layout */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #0f172a; 
+            color: #f1f5f9; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 15px;
+        }
+
+        /* Container centralizado que respeita a largura da tela */
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .card { 
+            background: #1e293b; 
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            width: 100%;
+        }
+
+        input, select, button, textarea { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 10px 0; 
+            border-radius: 12px; 
+            border: 1px solid #334155; 
+            background: #0f172a; 
+            color: white; 
+            font-size: 16px;
+        }
+
+        button { 
+            background: #6366f1; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: background 0.3s;
+        }
+
+        button:hover { background: #4f46e5; }
+        
         .hidden { display: none; }
-        .success-box { font-family: monospace; background: #064e3b; padding: 15px; border-radius: 8px; text-align: center; font-size: 20px; letter-spacing: 2px; margin: 15px 0; }
-        h2 { margin-top: 0; text-align: center; }
-        .checkbox-container { font-size: 0.85em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-        .checkbox-container input { width: auto; margin: 0; }
+        
+        .code-display { 
+            background: #064e3b; 
+            padding: 20px; 
+            border-radius: 12px; 
+            text-align: center; 
+            font-family: monospace; 
+            font-size: 22px; 
+            letter-spacing: 3px;
+            margin: 20px 0;
+            border: 1px solid #10b981;
+        }
     </style>
 </head>
 <body>
 
-<div class="card" id="telaLogin">
-    <h2>Acesso Premium</h2>
-    <input type="text" id="usuarioInput" placeholder="Usuário">
-    <input type="password" id="senhaInput" placeholder="Senha">
-    <label class="checkbox-container"><input type="checkbox" onclick="toggleSenha('senhaInput')"> Mostrar Senha</label>
-    <button onclick="verificarLogin()">Entrar</button>
-</div>
+<div class="app-container">
+    <div class="card" id="telaLogin">
+        <h2>Acesso Premium</h2>
+        <input type="text" id="usuarioInput" placeholder="Usuário">
+        <input type="password" id="senhaInput" placeholder="Senha">
+        <label><input type="checkbox" onclick="toggleSenha('senhaInput')"> Mostrar Senha</label>
+        <button onclick="verificarLogin()">Entrar</button>
+    </div>
 
-<div class="card hidden" id="conteudoSite">
-    <h2>Serviços</h2>
-    <select id="servico">
-        <option>iFood</option><option>Google Play</option><option>Roblox</option>
-        <option>Shopee</option><option>Amazon</option><option>PayPal</option>
-    </select>
-    <input type="number" id="valor" placeholder="Valor (R$)" oninput="calc()">
-    <p>Total a pagar: R$ <span id="precoFinal">0.00</span></p>
-    <button onclick="document.getElementById('pixArea').classList.remove('hidden')">Gerar Pagamento</button>
-</div>
+    <div class="card hidden" id="conteudoSite">
+        <h2>Serviços</h2>
+        <select id="servico">
+            <option>iFood</option><option>Google Play</option><option>Roblox</option>
+            <option>Shopee</option><option>Amazon</option><option>PayPal</option>
+        </select>
+        <input type="number" id="valor" placeholder="Valor (R$)" oninput="calc()">
+        <p>Total a pagar: R$ <span id="precoFinal">0.00</span></p>
+        <button onclick="document.getElementById('pixArea').classList.remove('hidden')">Gerar Pagamento</button>
+    </div>
 
-<div class="card hidden" id="pixArea">
-    <p>Chave Pix:</p>
-    <code style="display:block; background:#0f172a; padding:10px; border-radius:8px; word-break: break-all;">0144f837-fb94-4565-ac32-c80f139af4e2</code>
-    <button onclick="document.getElementById('confirmarArea').classList.remove('hidden')">Já paguei</button>
-</div>
+    <div class="card hidden" id="pixArea">
+        <p>Chave Pix:</p>
+        <code style="display:block; padding:15px; background:#0f172a; border-radius:8px; margin:10px 0;">0144f837-fb94-4565-ac32-c80f139af4e2</code>
+        <button onclick="document.getElementById('confirmarArea').classList.remove('hidden')">Já paguei</button>
+    </div>
 
-<div class="card hidden" id="confirmarArea">
-    <input type="number" id="valorPago" placeholder="Valor pago">
-    <input type="password" id="senhaLiberacao" placeholder="Senha de Liberação">
-    <label class="checkbox-container"><input type="checkbox" onclick="toggleSenha('senhaLiberacao')"> Mostrar Senha</label>
-    <button onclick="liberar()">Confirmar</button>
-</div>
+    <div class="card hidden" id="confirmarArea">
+        <input type="number" id="valorPago" placeholder="Valor pago">
+        <input type="password" id="senhaLiberacao" placeholder="Senha Liberação">
+        <label><input type="checkbox" onclick="toggleSenha('senhaLiberacao')"> Mostrar Senha</label>
+        <button onclick="liberar()">Confirmar Liberação</button>
+    </div>
 
-<div class="card hidden" id="resultadoFinal">
-    <h2>Código Gerado</h2>
-    <div class="success-box" id="codGerado"></div>
-    <input type="number" id="nota" placeholder="Nota (0-10)">
-    <textarea id="comentario" placeholder="Deixe um comentário"></textarea>
-    <button onclick="salvar()">Enviar Avaliação</button>
-    <hr style="border: 0; border-top: 1px solid #334155; margin: 20px 0;">
-    <h3>Suporte</h3>
-    <textarea id="msgSuporte" placeholder="Dúvida ou problema?"></textarea>
-    <button style="background:#475569" onclick="suporte()">Enviar Mensagem</button>
-    <div id="historico"></div>
+    <div class="card hidden" id="resultadoFinal">
+        <h2>Código Gerado</h2>
+        <div class="code-display" id="codGerado"></div>
+        <input type="number" id="nota" placeholder="Nota (0-10)">
+        <textarea id="comentario" placeholder="Deixe um comentário"></textarea>
+        <button onclick="salvar()">Enviar Avaliação</button>
+        <hr style="margin:20px 0; border:0; border-top:1px solid #334155;">
+        <h3>Suporte</h3>
+        <textarea id="msgSuporte" placeholder="Dúvida ou problema?"></textarea>
+        <button style="background:#475569" onclick="suporte()">Enviar Mensagem</button>
+        <div id="historico"></div>
+    </div>
 </div>
 
 <script>
@@ -89,25 +142,23 @@
             document.getElementById('codGerado').innerText = res;
             document.getElementById('confirmarArea').classList.add('hidden');
             document.getElementById('resultadoFinal').classList.remove('hidden');
-        } else { alert("Dados inválidos!"); }
+        } else { alert("Dados incorretos!"); }
     }
 
     function salvar() {
         let n = document.getElementById('nota').value;
         let c = document.getElementById('comentario').value;
         let d = document.createElement('div');
-        d.innerHTML = `<div style="padding:10px; border-bottom:1px solid #334155; font-size:0.9em;"><b>Nota ${n}/10:</b> ${c}</div>`;
+        d.innerHTML = `<div style="padding:10px; border-bottom:1px solid #334155;"><b>Nota ${n}/10:</b> ${c}</div>`;
         document.getElementById('historico').appendChild(d);
-        alert("Avaliação enviada!");
     }
 
     function suporte() {
         let m = document.getElementById('msgSuporte').value;
         let d = document.createElement('div');
-        d.innerHTML = `<div style="padding:10px; color:#fbbf24; font-size:0.9em;"><b>Suporte:</b> ${m}</div>`;
+        d.innerHTML = `<div style="padding:10px; color:#fbbf24;"><b>Suporte:</b> ${m}</div>`;
         document.getElementById('historico').appendChild(d);
         document.getElementById('msgSuporte').value = "";
-        alert("Mensagem enviada!");
     }
 </script>
 </body>
