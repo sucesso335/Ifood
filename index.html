@@ -6,32 +6,15 @@
     <title>Painel Premium</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: #0f172a; 
-            color: #f1f5f9; 
-            min-height: 100vh; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-            padding: 20px;
-        }
-        /* Estrutura de tela */
-        .screen { 
-            width: 100%; 
-            max-width: 400px; 
-            background: #1e293b; 
-            padding: 30px; 
-            border-radius: 20px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            animation: fadeIn 0.4s ease; /* Efeito de entrada profissional */
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #f1f5f9; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .screen { width: 100%; max-width: 400px; background: #1e293b; padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
         input, select, button, textarea { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 16px; }
         button { background: #6366f1; font-weight: 600; cursor: pointer; border: none; }
+        .btn-voltar { background: #475569; }
         .hidden { display: none; }
-        .code-display { background: #064e3b; padding: 20px; border-radius: 12px; text-align: center; font-family: monospace; font-size: 22px; margin: 20px 0; }
+        .code-display { background: #064e3b; padding: 20px; border-radius: 12px; text-align: center; font-family: monospace; font-size: 20px; margin: 20px 0; }
+        .msg-salva { background: #334155; padding: 10px; margin-top: 10px; border-radius: 8px; font-size: 14px; border-left: 4px solid #6366f1; }
     </style>
 </head>
 <body>
@@ -42,7 +25,7 @@
             <input type="text" id="usuarioInput" placeholder="Usuário">
             <input type="password" id="senhaInput" placeholder="Senha">
             <label><input type="checkbox" onclick="toggleSenha('senhaInput')"> Mostrar Senha</label>
-            <button onclick="mudarTela('screen-servicos')">Entrar</button>
+            <button onclick="fazerLogin()">Entrar</button>
         </div>
 
         <div id="screen-servicos" class="screen hidden">
@@ -54,13 +37,14 @@
             <input type="number" id="valor" placeholder="Valor (R$)" oninput="calc()">
             <p>Total: R$ <span id="precoFinal">0.00</span></p>
             <button onclick="mudarTela('screen-pix')">Gerar Pagamento</button>
+            <button class="btn-voltar" onclick="mudarTela('screen-login')">Voltar</button>
         </div>
 
         <div id="screen-pix" class="screen hidden">
             <h2>Pagamento</h2>
-            <p>Chave Pix:</p>
-            <code style="display:block; padding:15px; background:#0f172a; border-radius:8px; margin:10px 0; word-break: break-all;">0144f837-fb94-4565-ac32-c80f139af4e2</code>
+            <code>0144f837-fb94-4565-ac32-c80f139af4e2</code>
             <button onclick="mudarTela('screen-confirmar')">Já realizei o Pix</button>
+            <button class="btn-voltar" onclick="mudarTela('screen-servicos')">Voltar</button>
         </div>
 
         <div id="screen-confirmar" class="screen hidden">
@@ -69,6 +53,7 @@
             <input type="password" id="senhaLiberacao" placeholder="Senha de Liberação">
             <label><input type="checkbox" onclick="toggleSenha('senhaLiberacao')"> Mostrar Senha</label>
             <button onclick="verificarPagamento()">Confirmar</button>
+            <button class="btn-voltar" onclick="mudarTela('screen-pix')">Voltar</button>
         </div>
 
         <div id="screen-resultado" class="screen hidden">
@@ -76,32 +61,32 @@
             <div class="code-display" id="codGerado"></div>
             <input type="number" id="nota" placeholder="Nota (0-10)">
             <textarea id="comentario" placeholder="Comentário"></textarea>
-            <button onclick="alert('Avaliação enviada!')">Enviar Avaliação</button>
-            <button style="background:#475569" onclick="mudarTela('screen-suporte')">Abrir Suporte</button>
+            <button onclick="salvarAvaliacao()">Enviar Avaliação</button>
+            <button style="background:#f59e0b" onclick="mudarTela('screen-suporte')">Abrir Suporte</button>
+            <div id="historico"></div>
         </div>
 
         <div id="screen-suporte" class="screen hidden">
             <h2>Suporte</h2>
-            <textarea id="msgSuporte" placeholder="Digite sua mensagem"></textarea>
-            <button onclick="alert('Mensagem enviada ao Suporte!'); mudarTela('screen-resultado')">Enviar</button>
+            <input type="text" id="nomeSuporte" placeholder="Seu nome">
+            <textarea id="msgSuporte" placeholder="Sua mensagem"></textarea>
+            <button onclick="enviarSuporte()">Enviar</button>
+            <button class="btn-voltar" onclick="mudarTela('screen-resultado')">Voltar</button>
         </div>
     </div>
 
 <script>
-    function toggleSenha(id) {
-        let x = document.getElementById(id);
-        x.type = (x.type === "password") ? "text" : "password";
-    }
+    function toggleSenha(id) { let x = document.getElementById(id); x.type = (x.type === "password") ? "text" : "password"; }
 
     function mudarTela(id) {
-        // Validação simples de login
-        if(id === 'screen-servicos') {
-            if(document.getElementById('usuarioInput').value !== "keven12") return alert("Usuário inválido");
-        }
-        
-        // Esconde todas as telas e mostra a selecionada
         document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
+    }
+
+    function fazerLogin() {
+        if(document.getElementById('usuarioInput').value === "keven12" && document.getElementById('senhaInput').value === "140124") {
+            mudarTela('screen-servicos');
+        } else { alert("Dados incorretos!"); }
     }
 
     function calc() { document.getElementById('precoFinal').innerText = (document.getElementById('valor').value * 0.75).toFixed(2); }
@@ -110,12 +95,30 @@
         let vPago = parseFloat(document.getElementById('valorPago').value);
         let vEsp = parseFloat((document.getElementById('valor').value * 0.75).toFixed(2));
         if(vPago === vEsp && document.getElementById('senhaLiberacao').value === "keven12") {
-            let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let res = '';
+            let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             for(let i=0; i<15; i++) res += chars.charAt(Math.floor(Math.random() * chars.length));
             document.getElementById('codGerado').innerText = res;
             mudarTela('screen-resultado');
         } else { alert("Dados incorretos!"); }
+    }
+
+    function salvarAvaliacao() {
+        let div = document.createElement('div');
+        div.className = 'msg-salva';
+        div.innerHTML = `<b>Nota ${document.getElementById('nota').value}/10:</b> ${document.getElementById('comentario').value}`;
+        document.getElementById('historico').appendChild(div);
+    }
+
+    function enviarSuporte() {
+        let nome = document.getElementById('nomeSuporte').value;
+        let msg = document.getElementById('msgSuporte').value;
+        let div = document.createElement('div');
+        div.className = 'msg-salva';
+        div.style.borderLeftColor = "#f59e0b";
+        div.innerHTML = `<b>${nome}:</b> ${msg}`;
+        document.getElementById('historico').appendChild(div);
+        mudarTela('screen-resultado');
     }
 </script>
 </body>
