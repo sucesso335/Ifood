@@ -7,13 +7,14 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #f1f5f9; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .screen { width: 100%; max-width: 400px; background: #1e293b; padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .screen { width: 100%; max-width: 400px; background: #1e293b; padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         input, select, button, textarea { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 16px; }
-        button { background: #6366f1; font-weight: 600; cursor: pointer; border: none; }
+        button { background: #6366f1; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; }
+        button:hover { filter: brightness(1.1); }
         .btn-voltar { background: #475569; }
         .hidden { display: none; }
-        .code-display { background: #064e3b; padding: 20px; border-radius: 12px; text-align: center; font-family: monospace; font-size: 20px; margin: 20px 0; }
+        .code-display { background: #064e3b; padding: 20px; border-radius: 12px; text-align: center; font-family: monospace; font-size: 20px; margin: 10px 0; }
         .msg-salva { background: #334155; padding: 10px; margin-top: 10px; border-radius: 8px; font-size: 14px; border-left: 4px solid #6366f1; }
     </style>
 </head>
@@ -24,25 +25,20 @@
             <h2>Login</h2>
             <input type="text" id="usuarioInput" placeholder="Usuário">
             <input type="password" id="senhaInput" placeholder="Senha">
-            <label><input type="checkbox" onclick="toggleSenha('senhaInput')"> Mostrar Senha</label>
             <button onclick="fazerLogin()">Entrar</button>
         </div>
 
         <div id="screen-servicos" class="screen hidden">
             <h2>Serviços</h2>
-            <select id="servico">
-                <option>iFood</option><option>Google Play</option><option>Roblox</option>
-                <option>Shopee</option><option>Amazon</option><option>PayPal</option>
-            </select>
+            <select id="servico"><option>iFood</option><option>Google Play</option><option>Roblox</option></select>
             <input type="number" id="valor" placeholder="Valor (R$)" oninput="calc()">
-            <p>Total: R$ <span id="precoFinal">0.00</span></p>
             <button onclick="mudarTela('screen-pix')">Gerar Pagamento</button>
             <button class="btn-voltar" onclick="mudarTela('screen-login')">Voltar</button>
         </div>
 
         <div id="screen-pix" class="screen hidden">
             <h2>Pagamento</h2>
-            <code>0144f837-fb94-4565-ac32-c80f139af4e2</code>
+            <code style="display:block; padding:15px; background:#0f172a; border-radius:8px; margin:10px 0;">0144f837-fb94-4565-ac32-c80f139af4e2</code>
             <button onclick="mudarTela('screen-confirmar')">Já realizei o Pix</button>
             <button class="btn-voltar" onclick="mudarTela('screen-servicos')">Voltar</button>
         </div>
@@ -51,7 +47,6 @@
             <h2>Validação</h2>
             <input type="number" id="valorPago" placeholder="Valor pago">
             <input type="password" id="senhaLiberacao" placeholder="Senha de Liberação">
-            <label><input type="checkbox" onclick="toggleSenha('senhaLiberacao')"> Mostrar Senha</label>
             <button onclick="verificarPagamento()">Confirmar</button>
             <button class="btn-voltar" onclick="mudarTela('screen-pix')">Voltar</button>
         </div>
@@ -60,9 +55,10 @@
             <h2>Código Gerado</h2>
             <div class="code-display" id="codGerado"></div>
             <input type="number" id="nota" placeholder="Nota (0-10)">
-            <textarea id="comentario" placeholder="Comentário"></textarea>
+            <textarea id="comentario" placeholder="Seu comentário"></textarea>
             <button onclick="salvarAvaliacao()">Enviar Avaliação</button>
             <button style="background:#f59e0b" onclick="mudarTela('screen-suporte')">Abrir Suporte</button>
+            <button class="btn-voltar" onclick="mudarTela('screen-servicos')">Novo Pedido</button>
             <div id="historico"></div>
         </div>
 
@@ -76,8 +72,6 @@
     </div>
 
 <script>
-    function toggleSenha(id) { let x = document.getElementById(id); x.type = (x.type === "password") ? "text" : "password"; }
-
     function mudarTela(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
